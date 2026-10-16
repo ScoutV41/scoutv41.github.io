@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scout</title>
+<meta name="description" content="Scout's links: YouTube, Ko-fi, Reddit, Steam, Discord.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mask: #0e2b2a;
+    --mask-hi: #14403d;
+    --trace: #266b63;
+    --silk: #e9efe6;
+    --silk-dim: #9db5ac;
+    --gold: #e3b94d;
+    --display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+    --body: "Instrument Sans", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { min-height: 100%; background: var(--mask); }
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 48px 20px;
+    font-family: var(--body);
+    color: var(--silk);
+    background:
+      radial-gradient(circle at 1px 1px, rgba(233,239,230,.07) 1px, transparent 0) 0 0 / 22px 22px,
+      var(--mask);
+  }
+  main { width: min(440px, 100%); }
+  h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(3.4rem, 14vw, 5.2rem);
+    line-height: .95;
+    letter-spacing: -.03em;
+  }
+  .tag { margin: 14px 0 40px; color: var(--silk-dim); font-size: 1.05rem; }
+
+  ul { list-style: none; padding: 0; position: relative; display: grid; gap: 14px; }
+  /* the trace running behind every pad */
+  ul::before {
+    content: ""; position: absolute; left: 27px; top: 20px; bottom: 20px;
+    width: 3px; background: var(--trace); border-radius: 2px;
+  }
+  li { position: relative; }
+
+  a.link, .discord {
+    position: relative;
+    display: flex; align-items: center; gap: 18px;
+    width: 100%;
+    padding: 12px 18px 12px 14px;
+    background: var(--mask-hi);
+    border: 1px solid var(--trace);
+    border-radius: 10px;
+    color: inherit; text-decoration: none; font: inherit; text-align: left;
+    cursor: pointer;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .pad {
+    flex: none; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--mask); border: 3px solid var(--gold);
+    transition: background .15s ease, box-shadow .15s ease;
+  }
+  .name { font-family: var(--display); font-weight: 600; font-size: 1.2rem; }
+  .host { margin-left: auto; color: var(--silk-dim); font-size: .85rem; }
+
+  a.link:hover, .discord:hover { transform: translateX(6px); border-color: var(--gold); background: #185049; }
+  a.link:hover .pad, .discord:hover .pad { background: var(--gold); box-shadow: 0 0 0 5px rgba(227,185,77,.2); }
+  a.link:focus-visible, .discord:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  .discord { margin-top: 10px; }
+  .discord .name { font-family: var(--body); font-weight: 500; font-size: 1.05rem; }
+  .discord .name b { color: var(--gold); font-weight: 500; margin-right: 6px; }
+  .discord .host { transition: color .15s ease; }
+  .discord.copied .host { color: var(--gold); }
+
+  @media (max-width: 380px) { .host { display: none; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Scout</h1>
+  <p class="tag">Builds things from scratch. Find me here.</p>
+
+  <ul>
+    <li><a class="link" href="https://www.youtube.com/@Sc0ut-T-i1o" target="_blank" rel="noopener"><span class="pad"></span><span class="name">YouTube</span><span class="host">@Sc0ut-T-i1o</span></a></li>
+    <li><a class="link" href="https://ko-fi.com/scoutcv7/shop" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Ko-fi Shop</span><span class="host">ko-fi.com</span></a></li>
+    <li><a class="link" href="https://www.reddit.com/user/Electrical-Note-3177/" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Reddit</span><span class="host">u/Electrical-Note-3177</span></a></li>
+    <li><a class="link" href="https://steamcommunity.com/id/SC42-3/" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Steam</span><span class="host">SC42-3</span></a></li>
+    <li><a class="link" href="https://github.com/ScoutV41" target="_blank" rel="noopener"><span class="pad"></span><span class="name">GitHub</span><span class="host">ScoutV41</span></a></li>
+    <li><a class="link" href="mailto:ScoutV41@proton.me"><span class="pad"></span><span class="name">Email</span><span class="host">ScoutV41@proton.me</span></a></li>
+    <li>
+      <button class="discord" id="discord" type="button" aria-label="Copy Discord username scout07065">
+        <span class="pad"></span>
+        <span class="name"><b>[Discord]</b>scout07065</span>
+        <span class="host" id="hint">click to copy</span>
+      </button>
+    </li>
+  </ul>
+</main>
+
+<script>
+  const btn = document.getElementById('discord');
+  const hint = document.getElementById('hint');
+  btn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText('scout07065');
+      hint.textContent = 'copied';
+    } catch (e) {
+      hint.textContent = 'scout07065';
+    }
+    btn.classList.add('copied');
+    setTimeout(() => { hint.textContent = 'click to copy'; btn.classList.remove('copied'); }, 1800);
+  });
+</script>
+</body>
+</html>
