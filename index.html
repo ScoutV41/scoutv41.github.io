@@ -4,7 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Scout</title>
-<meta name="description" content="Scout's links: YouTube, Ko-fi, Reddit, Steam, Discord.">
+<meta name="description" content="Scout builds things from scratch: PCs, electronics, bots, and local AI tools. Find me on YouTube, Twitch, Ko-fi, Reddit, Steam, GitHub, and Discord.">
+<meta name="theme-color" content="#0e2b2a">
+<meta property="og:title" content="Scout">
+<meta property="og:description" content="Builds things from scratch. Find me here.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e2b2a'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23e3b94d' stroke-width='7'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
@@ -25,14 +30,15 @@
     min-height: 100vh;
     display: grid;
     place-items: center;
-    padding: 48px 20px;
+    padding: 56px 20px 40px;
     font-family: var(--body);
     color: var(--silk);
     background:
       radial-gradient(circle at 1px 1px, rgba(233,239,230,.07) 1px, transparent 0) 0 0 / 22px 22px,
       var(--mask);
   }
-  main { width: min(440px, 100%); }
+  main { width: min(460px, 100%); }
+
   h1 {
     font-family: var(--display);
     font-weight: 800;
@@ -40,14 +46,31 @@
     line-height: .95;
     letter-spacing: -.03em;
   }
-  .tag { margin: 14px 0 40px; color: var(--silk-dim); font-size: 1.05rem; }
+  .tag { margin: 14px 0 22px; color: var(--silk-dim); font-size: 1.05rem; }
 
-  ul { list-style: none; padding: 0; position: relative; display: grid; gap: 14px; }
+  .bio { max-width: 60ch; line-height: 1.6; font-size: 1rem; }
+  .bio p + p { margin-top: 12px; }
+  .bio p:last-child { color: var(--silk-dim); }
+
+  .chips { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips li {
+    padding: 5px 12px; border: 1px solid var(--trace); border-radius: 999px;
+    font-size: .88rem; color: var(--silk-dim); background: rgba(20,64,61,.5);
+  }
+
+  h2 {
+    margin: 44px 0 16px;
+    font-family: var(--display); font-weight: 600; font-size: 1.35rem; letter-spacing: -.01em;
+  }
+
+  ul.links { list-style: none; padding: 0; position: relative; display: grid; gap: 14px; }
   /* the trace running behind every pad */
-  ul::before {
+  ul.links::before {
     content: ""; position: absolute; left: 27px; top: 20px; bottom: 20px;
     width: 3px; background: var(--trace); border-radius: 2px;
+    transform-origin: top; animation: route 1.1s ease-out both;
   }
+  @keyframes route { from { transform: scaleY(0); } to { transform: scaleY(1); } }
   li { position: relative; }
 
   a.link, .discord {
@@ -68,11 +91,25 @@
     transition: background .15s ease, box-shadow .15s ease;
   }
   .name { font-family: var(--display); font-weight: 600; font-size: 1.2rem; }
-  .host { margin-left: auto; color: var(--silk-dim); font-size: .85rem; }
+  .sub { display: block; margin-top: 2px; font-family: var(--body); font-weight: 400; font-size: .9rem; color: var(--silk-dim); }
+  .host { margin-left: auto; color: var(--silk-dim); font-size: .85rem; text-align: right; }
 
   a.link:hover, .discord:hover { transform: translateX(6px); border-color: var(--gold); background: #185049; }
   a.link:hover .pad, .discord:hover .pad { background: var(--gold); box-shadow: 0 0 0 5px rgba(227,185,77,.2); }
   a.link:focus-visible, .discord:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  /* the one loud element: the anti-raid bot */
+  a.link.feature { border-color: var(--gold); border-width: 2px; padding-top: 16px; padding-bottom: 16px; background: #185049; }
+  a.link.feature .pad { background: var(--gold); }
+  a.link.feature .name { font-size: 1.3rem; }
+  .btn {
+    margin-left: auto; flex: none;
+    padding: 8px 14px; border-radius: 8px;
+    background: var(--gold); color: var(--mask);
+    font-weight: 500; font-size: .9rem;
+    transition: transform .15s ease;
+  }
+  a.link.feature:hover .btn { transform: scale(1.05); }
 
   .discord { margin-top: 10px; }
   .discord .name { font-family: var(--body); font-weight: 500; font-size: 1.05rem; }
@@ -80,31 +117,73 @@
   .discord .host { transition: color .15s ease; }
   .discord.copied .host { color: var(--gold); }
 
-  @media (max-width: 380px) { .host { display: none; } }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  footer { margin-top: 48px; color: var(--silk-dim); font-size: .85rem; }
+
+  @media (max-width: 420px) {
+    .host { display: none; }
+    a.link.feature { flex-wrap: wrap; }
+    .btn { margin-left: 46px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    ul.links::before { animation: none; }
+  }
 </style>
 </head>
 <body>
 <main>
-  <h1>Scout</h1>
-  <p class="tag">Builds things from scratch. Find me here.</p>
+  <header>
+    <h1>Scout</h1>
+    <p class="tag">Builds things from scratch. Find me here.</p>
 
-  <ul>
-    <li><a class="link" href="https://www.youtube.com/@Sc0ut-T-i1o" target="_blank" rel="noopener"><span class="pad"></span><span class="name">YouTube</span><span class="host">@Sc0ut-T-i1o</span></a></li>
-    <li><a class="link" href="https://www.twitch.tv/scoutcv4" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Twitch</span><span class="host">scoutcv4</span></a></li>
-    <li><a class="link" href="https://ko-fi.com/scoutcv7/shop" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Ko-fi Shop</span><span class="host">ko-fi.com</span></a></li>
-    <li><a class="link" href="https://www.reddit.com/user/Electrical-Note-3177/" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Reddit</span><span class="host">u/Electrical-Note-3177</span></a></li>
-    <li><a class="link" href="https://steamcommunity.com/id/SC42-3/" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Steam</span><span class="host">SC42-3</span></a></li>
-    <li><a class="link" href="https://github.com/ScoutV41" target="_blank" rel="noopener"><span class="pad"></span><span class="name">GitHub</span><span class="host">ScoutV41</span></a></li>
-    <li><a class="link" href="mailto:ScoutV41@proton.me"><span class="pad"></span><span class="name">Email</span><span class="host">ScoutV41@proton.me</span></a></li>
-    <li>
-      <button class="discord" id="discord" type="button" aria-label="Copy Discord username scout07065">
-        <span class="pad"></span>
-        <span class="name"><b>[Discord]</b>scout07065</span>
-        <span class="host" id="hint">click to copy</span>
-      </button>
-    </li>
-  </ul>
+    <div class="bio">
+      <p>Self-taught tech nerd who would rather build the thing than buy it. I make custom PCs, DIY electronics, Discord bots and themes, and local AI tools, then film the process for YouTube.</p>
+      <p>Most of it starts as a "how hard could it be?" and ends as a project I'm weirdly proud of.</p>
+    </div>
+
+    <ul class="chips" aria-label="What I make">
+      <li>PC builds</li>
+      <li>Electronics</li>
+      <li>Discord bots</li>
+      <li>Local AI tools</li>
+      <li>Videos</li>
+    </ul>
+  </header>
+
+  <section aria-labelledby="projects">
+    <h2 id="projects">Projects</h2>
+    <ul class="links">
+      <li>
+        <a class="link feature" href="https://land-8qo.pages.dev/" target="_blank" rel="noopener">
+          <span class="pad"></span>
+          <span class="name">Protect your server<span class="sub">An anti-raid bot for your Discord</span></span>
+          <span class="btn">Check it out</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="find">
+    <h2 id="find">Find me</h2>
+    <ul class="links">
+      <li><a class="link" href="https://www.youtube.com/@Sc0ut-T-i1o" target="_blank" rel="noopener"><span class="pad"></span><span class="name">YouTube</span><span class="host">@Sc0ut-T-i1o</span></a></li>
+      <li><a class="link" href="https://www.twitch.tv/scoutcv4" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Twitch</span><span class="host">scoutcv4</span></a></li>
+      <li><a class="link" href="https://ko-fi.com/scoutcv7/shop" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Ko-fi Shop</span><span class="host">ko-fi.com</span></a></li>
+      <li><a class="link" href="https://www.reddit.com/user/Electrical-Note-3177/" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Reddit</span><span class="host">u/Electrical-Note-3177</span></a></li>
+      <li><a class="link" href="https://steamcommunity.com/id/SC42-3/" target="_blank" rel="noopener"><span class="pad"></span><span class="name">Steam</span><span class="host">SC42-3</span></a></li>
+      <li><a class="link" href="https://github.com/ScoutV41" target="_blank" rel="noopener"><span class="pad"></span><span class="name">GitHub</span><span class="host">ScoutV41</span></a></li>
+      <li><a class="link" href="mailto:ScoutV41@proton.me"><span class="pad"></span><span class="name">Email</span><span class="host">ScoutV41@proton.me</span></a></li>
+      <li>
+        <button class="discord" id="discord" type="button" aria-label="Copy Discord username scout07065">
+          <span class="pad"></span>
+          <span class="name"><b>[Discord]</b>scout07065</span>
+          <span class="host" id="hint">click to copy</span>
+        </button>
+      </li>
+    </ul>
+  </section>
+
+  <footer>Built by hand, no site builder.</footer>
 </main>
 
 <script>
