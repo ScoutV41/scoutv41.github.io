@@ -119,6 +119,55 @@
 
   footer { margin-top: 48px; color: var(--silk-dim); font-size: .85rem; }
 
+
+  /* tip jar */
+  .tip {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-bottom: 18px; padding: 10px 16px;
+    background: transparent; color: var(--gold);
+    border: 2px solid var(--gold); border-radius: 10px;
+    font: 500 .95rem var(--body); cursor: pointer;
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+  }
+  .tip .pad { width: 16px; height: 16px; border-width: 3px; background: transparent; }
+  .tip:hover { background: var(--gold); color: var(--mask); transform: translateY(-2px); }
+  .tip:hover .pad { border-color: var(--mask); box-shadow: none; }
+  .tip:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  dialog.drawer {
+    position: fixed; inset: auto 0 0 0; margin: 0 auto; padding: 0;
+    width: min(460px, 100%); max-width: 100%; max-height: 90vh; overflow: auto;
+    background: var(--mask-hi); color: var(--silk);
+    border: 1px solid var(--trace); border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+    transform: translateY(100%); transition: transform .28s ease;
+  }
+  dialog.drawer.in { transform: translateY(0); }
+  dialog.drawer::backdrop { background: rgba(5,18,17,0); backdrop-filter: blur(0); transition: background .28s ease, backdrop-filter .28s ease; }
+  dialog.drawer.in::backdrop { background: rgba(5,18,17,.7); backdrop-filter: blur(3px); }
+  .drawer-inner { padding: 14px 22px calc(26px + env(safe-area-inset-bottom, 0px)); }
+  .grab { width: 44px; height: 4px; border-radius: 2px; background: var(--trace); margin: 0 auto 16px; }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; }
+  .drawer h3 { font-family: var(--display); font-weight: 800; font-size: 1.6rem; letter-spacing: -.02em; }
+  .x { background: none; border: 0; color: var(--silk-dim); font-size: 1.6rem; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
+  .x:hover { color: var(--gold); }
+  .x:focus-visible, .amt:focus-visible, .custom:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .drawer p.msg { margin: 10px 0 18px; color: var(--silk-dim); line-height: 1.55; font-size: .97rem; }
+  .amts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .amt {
+    display: block; text-align: center; padding: 14px 0; text-decoration: none;
+    font-family: var(--display); font-weight: 800; font-size: 1.3rem; color: var(--silk);
+    background: var(--mask); border: 2px solid var(--trace); border-radius: 10px;
+    transition: border-color .15s ease, background .15s ease, color .15s ease, transform .15s ease;
+  }
+  .amt:hover { border-color: var(--gold); background: var(--gold); color: var(--mask); transform: translateY(-2px); }
+  .custom {
+    display: block; margin-top: 12px; padding: 12px; text-align: center; text-decoration: none;
+    color: var(--gold); border: 1px dashed var(--gold); border-radius: 10px; font-weight: 500;
+  }
+  .custom:hover { background: rgba(227,185,77,.12); }
+  .fine { margin-top: 16px; color: var(--silk-dim); font-size: .8rem; text-align: center; }
+
   @media (max-width: 420px) {
     .host { display: none; }
     a.link.feature { flex-wrap: wrap; }
@@ -185,8 +234,25 @@
     </ul>
   </section>
 
-  <footer>Have a question or a feature request? For all business inquiries, email is the best way to reach me.</footer>
+  <footer>
+    <button class="tip" id="tip" type="button" aria-haspopup="dialog"><span class="pad"></span>Support my work</button>
+    <p>Have a question or a feature request? For all business inquiries, email is the best way to reach me.</p>
+  </footer>
 </main>
+
+<dialog class="drawer" id="drawer" aria-labelledby="drawer-title">
+  <div class="drawer-inner">
+    <div class="grab"></div>
+    <div class="drawer-head">
+      <h3 id="drawer-title">Tip jar</h3>
+      <button class="x" id="close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <p class="msg">No pressure at all. If something I made helped you, you can chip in and it goes straight back into more builds.</p>
+    <div class="amts" id="amts"></div>
+    <a class="custom" id="custom" target="_blank" rel="noopener">Choose your own amount</a>
+    <p class="fine">Secure checkout by Stripe. I never see your card details.</p>
+  </div>
+</dialog>
 
 <script>
   const btn = document.getElementById('discord');
@@ -201,6 +267,47 @@
     btn.classList.add('copied');
     setTimeout(() => { hint.textContent = 'click to copy'; btn.classList.remove('copied'); }, 1800);
   });
+
+  // ---- Tip jar ----
+  // Paste your Stripe Payment Link URLs here (Stripe Dashboard > Payment Links).
+  // Leave a link as '' to hide that button.
+  const TIP_LINKS = [
+    { label: '$1',  url: 'https://buy.stripe.com/fZu8wP9JxaVw4fcaJK6Vq03' },
+    { label: '$5',  url: 'https://buy.stripe.com/3cIbJ108X6FgcLIdVW6Vq02' },
+    { label: '$10', url: 'https://buy.stripe.com/fZu9AT3l9bZAcLIdVW6Vq04' },
+    { label: '$15', url: 'https://buy.stripe.com/00w7sLf3R1kW6nk19a6Vq06' }
+  ];
+  // Optional: a Payment Link with "Let customers choose what to pay" turned on.
+  // Leave as '' to hide the "Choose your own amount" button.
+  const TIP_CUSTOM = 'https://buy.stripe.com/bJeaEXbRF7Jkh1Y8BC6Vq07';
+
+  const drawer = document.getElementById('drawer');
+  const tip = document.getElementById('tip');
+  const amts = document.getElementById('amts');
+  const custom = document.getElementById('custom');
+
+  TIP_LINKS.filter(l => l.url).forEach(l => {
+    const a = document.createElement('a');
+    a.className = 'amt'; a.textContent = l.label; a.href = l.url;
+    a.target = '_blank'; a.rel = 'noopener';
+    amts.appendChild(a);
+  });
+  if (TIP_CUSTOM) custom.href = TIP_CUSTOM; else custom.hidden = true;
+  if (!amts.children.length) amts.hidden = true;
+
+  function openDrawer() {
+    drawer.showModal();
+    requestAnimationFrame(() => requestAnimationFrame(() => drawer.classList.add('in')));
+  }
+  function closeDrawer() {
+    drawer.classList.remove('in');
+    setTimeout(() => drawer.close(), 260);
+  }
+  tip.addEventListener('click', openDrawer);
+  document.getElementById('close').addEventListener('click', closeDrawer);
+  drawer.addEventListener('cancel', e => { e.preventDefault(); closeDrawer(); });   // Esc key
+  drawer.addEventListener('click', e => { if (e.target === drawer) closeDrawer(); }); // backdrop click
+  drawer.addEventListener('close', () => { tip.focus(); });
 </script>
 </body>
 </html>
